@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cotizador Vidrios VCQ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: #0b1120;
+      color: #e5e7eb;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+    }
+    .app-container {
+      width: 100%;
+      max-width: 1100px;
+      padding: 16px;
+    }
+    .card {
+      background: radial-gradient(circle at top left, #1e293b, #020617);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.5);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+    h1, h2, h3 {
+      margin: 0 0 10px 0;
+    }
+    h1 {
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #7dd3fc;
+    }
+    .muted {
+      color: #9ca3af;
+      font-size: 13px;
+    }
+    .input-group {
+      margin-bottom: 10px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+      color: #d1d5db;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 14px;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.4);
+    }
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: linear-gradient(to right, #0ea5e9, #22c55e);
+      color: #0b1120;
+      font-weight: 600;
+      width: 100%;
+      margin-top: 6px;
+    }
+    .btn-outline {
+      background: transparent;
+      color: #e5e7eb;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+    }
+    .btn-small {
+      padding: 5px 10px;
+      font-size: 12px;
+      border-radius: 999px;
+    }
+    .center {
+      text-align: center;
+    }
+    .nav-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .nav-tab {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: #9ca3af;
+      cursor: pointer;
+    }
+    .nav-tab.active {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: rgba(56, 189, 248, 0.7);
+      color: #e5e7eb;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+    th, td {
+      padding: 6px 4px;
+      border-bottom: 1px solid rgba(31, 41, 55, 0.8);
+      text-align: left;
+    }
+    th {
+      font-weight: 500;
+      color: #9ca3af;
+    }
+    .totals {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      font-size: 13px;
+    }
+    .totals-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .totals-row strong {
+      font-weight: 600;
+    }
+    .tag {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: #9ca3af;
+    }
+    .flex {
+      display: flex;
+      gap: 10px;
+    }
+    .flex-2 { flex: 2; }
+    .flex-1 { flex: 1; }
+    .scroll {
+      max-height: 280px;
+      overflow: auto;
+    }
+    .login-wrapper {
+      max-width: 420px;
+      margin: 0 auto;
+      margin-top: 30px;
+    }
+    .hidden { display: none; }
+    @media (max-width: 768px) {
+      .flex { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- LOGIN -->
+    <div id="login-view" class="card login-wrapper">
+      <h1>
+        Cotizador VCQ
+        <span class="badge">Demo</span>
+      </h1>
+      <p class="muted">Inicia sesión con tu usuario de la hoja “USUARIOS”.</p>
+
+      <div class="input-group">
+        <label>Usuario</label>
+        <input id="login-usuario" type="text" placeholder="admin o vendedor1" />
+      </div>
+      <div class="input-group">
+        <label>Contraseña</label>
+        <input id="login-pass" type="password" placeholder="••••••••" />
+      </div>
+      <button id="btn-login" class="btn-primary">
+        Entrar
+      </button>
+      <p id="login-error" class="muted" style="color:#fca5a5;margin-top:8px;"></p>
+    </div>
+
+    <!-- APP PRINCIPAL -->
+    <div id="main-view" class="card hidden">
+      <div class="flex" style="align-items:flex-start; margin-bottom:12px;">
+        <div class="flex-2">
+          <h1>
+            Cotizador Vidrios VCQ
+            <span class="badge">Operativo</span>
+          </h1>
+          <p class="muted" id="user-info"></p>
+        </div>
+        <div class="flex-1 center">
+          <button id="btn-logout" class="btn-outline btn-small">Cerrar sesión</button>
+        </div>
+      </div>
+
+      <div class="nav-tabs">
+        <button class="nav-tab active" data-tab="tab-precios">Precios</button>
+        <button class="nav-tab" data-tab="tab-procesos">Procesos</button>
+        <button class="nav-tab" data-tab="tab-cotizador">Cotizador</button>
+        <button class="nav-tab" data-tab="tab-historial">Historial</button>
+        <button class="nav-tab" data-tab="tab-clientes" data-role="admin-only">Clientes</button>
+        <button class="nav-tab" data-tab="tab-registro" data-role="admin-only">Registro cotización</button>
+        <button class="nav-tab" data-tab="tab-usuarios" data-role="admin-only">Usuarios</button>
+      </div>
+
+      <!-- PRECIOS -->
+      <div id="tab-precios" class="tab">
+        <h3>Lista de precios (solo lectura)</h3>
+        <p class="muted">Datos tomados de la hoja “PRECIOS”.</p>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Espesor (mm)</th>
+                <th>Precio m² (MXN)</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-precios"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PROCESOS -->
+      <div id="tab-procesos" class="tab hidden">
+        <h3>Procesos (solo lectura)</h3>
+        <p class="muted">Datos tomados de la hoja “PROCESOS”.</p>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Proceso</th>
+                <th>Precio unitario (MXN)</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-procesos"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- COTIZADOR -->
+      <div id="tab-cotizador" class="tab hidden">
+        <h3>Cotizador principal</h3>
+        <p class="muted">
+          Calcula el total con base en área, precio m² y procesos.
+        </p>
+
+        <div class="flex">
+          <div class="flex-2">
+            <div class="input-group">
+              <label>Cliente</label>
+              <input id="cot-cliente" type="text" placeholder="Nombre cliente / empresa" />
+            </div>
+            <div class="input-group">
+              <label>Observaciones</label>
+              <textarea id="cot-observaciones" rows="2" placeholder="Notas especiales (opcional)"></textarea>
+            </div>
+
+            <div class="input-group">
+              <label>Producto</label>
+              <select id="cot-producto"></select>
+            </div>
+
+            <div class="flex">
+              <div class="flex-1 input-group">
+                <label>Ancho (cm)</label>
+                <input id="cot-ancho" type="number" />
+              </div>
+              <div class="flex-1 input-group">
+                <label>Alto (cm)</label>
+                <input id="cot-alto" type="number" />
+              </div>
+              <div class="flex-1 input-group">
+                <label>Cantidad</label>
+                <input id="cot-cantidad" type="number" value="1" min="1" />
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label>Precio m²</label>
+              <input id="cot-precio-m2" type="number" readonly />
+            </div>
+
+            <div style="margin-top:10px;">
+              <span class="tag">Procesos por pieza (máx. 3)</span>
+            </div>
+
+            <div class="flex" style="margin-top:8px;">
+              <div class="flex-1">
+                <div class="input-group">
+                  <label>Proc. 1</label>
+                  <select id="proc1"></select>
+                </div>
+                <div class="input-group">
+                  <label>Cant. proc. 1</label>
+                  <input id="qproc1" type="number" value="0" min="0" />
+                </div>
+              </div>
+              <div class="flex-1">
+                <div class="input-group">
+                  <label>Proc. 2</label>
+                  <select id="proc2"></select>
+                </div>
+                <div class="input-group">
+                  <label>Cant. proc. 2</label>
+                  <input id="qproc2" type="number" value="0" min="0" />
+                </div>
+              </div>
+              <div class="flex-1">
+                <div class="input-group">
+                  <label>Proc. 3</label>
+                  <select id="proc3"></select>
+                </div>
+                <div class="input-group">
+                  <label>Cant. proc. 3</label>
+                  <input id="qproc3" type="number" value="0" min="0" />
+                </div>
+              </div>
+            </div>
+
+            <button id="btn-guardar-cotizacion" class="btn-primary">
+              Guardar cotización
+            </button>
+          </div>
+
+          <div class="flex-1">
+            <div class="totals">
+              <div class="totals-row">
+                <span>Área (m²)</span>
+                <span id="res-area">0.00</span>
+              </div>
+              <div class="totals-row">
+                <span>Subtotal vidrio</span>
+                <span id="res-subtotal-vidrio">$0.00</span>
+              </div>
+              <div class="totals-row">
+                <span>Total procesos</span>
+                <span id="res-total-procesos">$0.00</span>
+              </div>
+              <div class="totals-row">
+                <span><strong>Subtotal</strong></span>
+                <span id="res-subtotal">$0.00</span>
+              </div>
+              <div class="totals-row">
+                <span>IVA 16%</span>
+                <span id="res-iva">$0.00</span>
+              </div>
+              <div class="totals-row" style="margin-top:6px;">
+                <span><strong>Total cotización</strong></span>
+                <span id="res-total" style="font-weight:700;color:#a5b4fc">$0.00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="muted" style="margin-top:8px;">
+          El historial se guarda en este dispositivo usando localStorage.
+        </p>
+      </div>
+
+      <!-- HISTORIAL (por usuario o global si admin) -->
+      <div id="tab-historial" class="tab hidden">
+        <div class="flex" style="align-items:center;margin-bottom:6px;">
+          <h3 style="flex:1;">Historial de cotizaciones</h3>
+          <button id="btn-export-csv" class="btn-outline btn-small">Exportar CSV</button>
+        </div>
+        <p class="muted">Si eres vendedor, ves solo tus cotizaciones. Si eres admin, ves todas.</p>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Total</th>
+                <th>Usuario</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-historial"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CLIENTES -->
+      <div id="tab-clientes" class="tab hidden">
+        <div class="flex" style="align-items:flex-start; gap:16px;">
+          <div class="flex-1">
+            <h3>Clientes</h3>
+            <p class="muted">Equivalente a la hoja “CLIENTES”.</p>
+            <div class="scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Teléfono</th>
+                    <th>Email</th>
+                    <th>RFC</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-clientes"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="flex-1">
+            <h3>Agregar cliente</h3>
+            <p class="muted">Solo admin puede crear o editar clientes.</p>
+            <div class="input-group">
+              <label>Nombre</label>
+              <input id="cli-nombre" type="text" />
+            </div>
+            <div class="input-group">
+              <label>Teléfono</label>
+              <input id="cli-telefono" type="text" />
+            </div>
+            <div class="input-group">
+              <label>Email</label>
+              <input id="cli-email" type="email" />
+            </div>
+            <div class="input-group">
+              <label>RFC</label>
+              <input id="cli-rfc" type="text" />
+            </div>
+            <button id="btn-guardar-cliente" class="btn-primary">Guardar cliente</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- REGISTRO COTIZACION (detalle por proceso) -->
+      <div id="tab-registro" class="tab hidden">
+        <div class="flex" style="align-items:center;margin-bottom:6px;">
+          <h3 style="flex:1;">Registro de cotización (detalle)</h3>
+          <button id="btn-export-registro" class="btn-outline btn-small">Exportar registro CSV</button>
+        </div>
+        <p class="muted">Vista tipo “REGISTRO COTIZACION”: una fila por cotización y sus procesos.</p>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>ID Cot.</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Producto</th>
+                <th>Dimensiones</th>
+                <th>Cant.</th>
+                <th>Área m²</th>
+                <th>Procesos</th>
+                <th>Total</th>
+                <th>Usuario</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-registro"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- USUARIOS -->
+      <div id="tab-usuarios" class="tab hidden">
+        <h3>Usuarios del sistema</h3>
+        <p class="muted">Equivalente a la hoja “USUARIOS” (solo lectura en este demo).</p>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Nombre</th>
+                <th>Rol</th>
+                <th>Activo</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-usuarios"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // ==== DATOS BASE (como las hojas de Excel) ====
+      const USUARIOS = [
+        { ID_USUARIO: 1, USUARIO: "admin",     CONTRASENA: "admin123", NOMBRE: "Administrador", ROL: "ADMIN",    ACTIVO: "SI" },
+        { ID_USUARIO: 2, USUARIO: "vendedor1", CONTRASENA: "1234",     NOMBRE: "Vendedor 1",   ROL: "VENDEDOR", ACTIVO: "SI"  },
+      ];
+
+      const PRECIOS = [
+        { PRODUCTO: "CLARO 2MM", ESPESOR_MM: 2.0,  PRECIO_M2: 335.0 },
+        { PRODUCTO: "CLARO 3MM", ESPESOR_MM: 3.0,  PRECIO_M2: 358.0 },
+        { PRODUCTO: "CLARO 4MM", ESPESOR_MM: 4.0,  PRECIO_M2: 415.0 },
+        { PRODUCTO: "CLARO 5MM", ESPESOR_MM: 5.0,  PRECIO_M2: 315.0 },
+        { PRODUCTO: "CLARO 6MM", ESPESOR_MM: 6.0,  PRECIO_M2: 320.0 },
+        { PRODUCTO: "CLARO 8MM", ESPESOR_MM: 8.0,  PRECIO_M2: 779.0 },
+        { PRODUCTO: "CLARO 10MM", ESPESOR_MM: 10.0, PRECIO_M2: 608.0 },
+        { PRODUCTO: "CLARO 12MM", ESPESOR_MM: 12.0, PRECIO_M2: 1100.0 },
+        { PRODUCTO: "FILTRASOL 3MM", ESPESOR_MM: 3.0,  PRECIO_M2: 340.26 },
+        { PRODUCTO: "FILTRASOL 6MM", ESPESOR_MM: 6.0,  PRECIO_M2: 440.26 },
+        { PRODUCTO: "FILTRASOL 10MM", ESPESOR_MM: 10.0, PRECIO_M2: 997.5 },
+        { PRODUCTO: "BRONCE 6MM", ESPESOR_MM: 6.0,  PRECIO_M2: 1155.0 },
+        { PRODUCTO: "BRONCE 9MM", ESPESOR_MM: 9.0,  PRECIO_M2: 1540.0 },
+        { PRODUCTO: "CRISTAZUL 6MM", ESPESOR_MM: 6.0,  PRECIO_M2: 1630.0 },
+        { PRODUCTO: "CRISTAZUL 9MM", ESPESOR_MM: 9.0,  PRECIO_M2: 1962.0 },
+        { PRODUCTO: "ESPEJO 3MM", ESPESOR_MM: 3.0, PRECIO_M2: 517.0 },
+        { PRODUCTO: "ESPEJO 4MM", ESPESOR_MM: 4.0, PRECIO_M2: 620.0 },
+        { PRODUCTO: "ESPEJO 6MM", ESPESOR_MM: 6.0, PRECIO_M2: 891.0 },
+        { PRODUCTO: "REFLEJANTE 6MM", ESPESOR_MM: 6.0, PRECIO_M2: 1170.0 },
+        { PRODUCTO: "MANDARINO 4MM", ESPESOR_MM: 4.0, PRECIO_M2: 550.0 },
+        { PRODUCTO: "CHAMACON 4MM", ESPESOR_MM: 4.0, PRECIO_M2: 530.0 },
+        { PRODUCTO: "CATEDRAL 4MM", ESPESOR_MM: 4.0, PRECIO_M2: 530.0 },
+        { PRODUCTO: "DELTA 4MM", ESPESOR_MM: 4.0, PRECIO_M2: 530.0 },
+        { PRODUCTO: "CORONA 4MM", ESPESOR_MM: 4.0, PRECIO_M2: 530.0 },
+        { PRODUCTO: "NIEVE 4MM", ESPESOR_MM: 4.0, PRECIO_M2: 530.0 },
+        { PRODUCTO: "AMATE 4MM", ESPESOR_MM: 4.0, PRECIO_M2: 530.0 },
+        { PRODUCTO: "ANTIRREFLEJANTE 2MM", ESPESOR_MM: 2.0, PRECIO_M2: 540.0 },
+        { PRODUCTO: "ANTIRREFLEJANTE 4MM", ESPESOR_MM: 4.0, PRECIO_M2: 740.0 },
+        { PRODUCTO: "SATINADO 4MM", ESPESOR_MM: 4.0, PRECIO_M2: 850.0 },
+        { PRODUCTO: "SATINADO 6MM", ESPESOR_MM: 6.0, PRECIO_M2: 1021.0 },
+        { PRODUCTO: "SATINADO 9MM", ESPESOR_MM: 9.0, PRECIO_M2: 1500.0 },
+        { PRODUCTO: "REFLECTA AZUL / ROYAL BLUE", ESPESOR_MM: null, PRECIO_M2: 1100.0 },
+        { PRODUCTO: "ESLABÓN 3.5MM", ESPESOR_MM: 3.5, PRECIO_M2: 500.0 },
+        { PRODUCTO: "TEMPLADO 6MM", ESPESOR_MM: 6.0, PRECIO_M2: 900.0 },
+        { PRODUCTO: "TEMPLADO 8MM", ESPESOR_MM: 8.0, PRECIO_M2: 1600.0 },
+        { PRODUCTO: "TEMPLADO 10MM", ESPESOR_MM: 10.0, PRECIO_M2: 1260.0 },
+        { PRODUCTO: "TEMPLADO 12MM", ESPESOR_MM: 12.0, PRECIO_M2: 1610.0 },
+        { PRODUCTO: "TEMP FILTRASOL 6MM", ESPESOR_MM: 6.0, PRECIO_M2: 1245.0 },
+        { PRODUCTO: "TEMP FILTRASOL 9MM", ESPESOR_MM: 9.0, PRECIO_M2: 1620.0 },
+        { PRODUCTO: "TEMP TX 6MM", ESPESOR_MM: 6.0, PRECIO_M2: 1100.0 },
+        { PRODUCTO: "TEMP REPLA 6MM", ESPESOR_MM: 6.0, PRECIO_M2: 1910.0 },
+        { PRODUCTO: "TEMP CRISTAZUL 6MM", ESPESOR_MM: 6.0, PRECIO_M2: 2100.0 },
+        { PRODUCTO: "TEMP ROYAL BLUE", ESPESOR_MM: null, PRECIO_M2: 2100.0 },
+      ];
+
+      const PROCESOS = [
+        { PROCESO: "CANTO PULIDO 6MM", PRECIO_UNIT: 70 },
+        { PROCESO: "CANTO PULIDO 10MM", PRECIO_UNIT: 90 },
+        { PROCESO: "SAQUE", PRECIO_UNIT: 60 },
+        { PROCESO: "SAQUE PISO/GRANDE", PRECIO_UNIT: 110 },
+        { PROCESO: "BISAGRA MICKEY", PRECIO_UNIT: 75 },
+        { PROCESO: "BARRENO", PRECIO_UNIT: 30 },
+        { PROCESO: "FILO MUERTO 6MM", PRECIO_UNIT: 30 },
+        { PROCESO: "FILO MUERTO 9MM", PRECIO_UNIT: 30 },
+        { PROCESO: "ESMERILADO 6MM", PRECIO_UNIT: 180 },
+        { PROCESO: "ESMERILADO 9MM", PRECIO_UNIT: 210 },
+        { PROCESO: "MAQ. TEMPLADO 6MM", PRECIO_UNIT: 135 },
+        { PROCESO: "MAQ. TEMPLADO 9MM", PRECIO_UNIT: 235 },
+        { PROCESO: "MAQ. CANTO 6MM", PRECIO_UNIT: 50 },
+        { PROCESO: "MAQ. CANTO 10MM", PRECIO_UNIT: 50 },
+      ];
+
+      // CLIENTES (simula hoja CLIENTES)
+      const LS_CLIENTES_KEY = "vcq_clientes";
+      const LS_CLIENTES_ID_KEY = "vcq_clientes_next_id";
+
+      let currentUser = null;
+      const LS_KEY = "vcq_cotizaciones";      // hoja COTIZACIONES
+      const LS_ID_KEY = "vcq_next_id";        // ID_COTIZACION
+
+      // ==== LOGIN & ROLES ====
+      function login() {
+        const usuario = document.getElementById("login-usuario").value.trim();
+        const pass = document.getElementById("login-pass").value.trim();
+        const errorEl = document.getElementById("login-error");
+
+        const user = USUARIOS.find(
+          (u) =>
+            u.USUARIO.toLowerCase() === usuario.toLowerCase() &&
+            u.CONTRASENA === pass &&
+            u.ACTIVO === "SI"
+        );
+
+        if (!user) {
+          errorEl.textContent = "Usuario o contraseña incorrectos.";
+          return;
+        }
+
+        currentUser = user;
+        errorEl.textContent = "";
+
+        document.getElementById("login-view").classList.add("hidden");
+        document.getElementById("main-view").classList.remove("hidden");
+
+        document.getElementById(
+          "user-info"
+        ).textContent = `${user.NOMBRE} · Rol: ${user.ROL}`;
+
+        configurarUIporRol();
+        initTables();
+        initSelectors();
+        renderUsuarios();
+        renderClientes();
+        recalcular();
+        renderHistorial();
+        renderRegistro();
+      }
+
+      function logout() {
+        currentUser = null;
+        document.getElementById("main-view").classList.add("hidden");
+        document.getElementById("login-view").classList.remove("hidden");
+      }
+
+      function configurarUIporRol() {
+        const isAdmin = currentUser && currentUser.ROL === "ADMIN";
+        const adminButtons = document.querySelectorAll("[data-role='admin-only']");
+        adminButtons.forEach((btn) => {
+          btn.style.display = isAdmin ? "inline-flex" : "none";
+        });
+
+        // Si no es admin y está en una pestaña admin, lo mandamos al cotizador
+        if (!isAdmin) {
+          switchTab("tab-cotizador");
+        }
+      }
+
+      // ==== TABS ====
+      function switchTab(tabId) {
+        document.querySelectorAll(".tab").forEach((t) => t.classList.add("hidden"));
+        const tabEl = document.getElementById(tabId);
+        if (tabEl) tabEl.classList.remove("hidden");
+
+        document.querySelectorAll(".nav-tab").forEach((btn) => {
+          btn.classList.remove("active");
+          if (btn.getAttribute("data-tab") === tabId) {
+            btn.classList.add("active");
+          }
+        });
+
+        if (tabId === "tab-historial") {
+          renderHistorial();
+        }
+        if (tabId === "tab-registro") {
+          renderRegistro();
+        }
+        if (tabId === "tab-clientes") {
+          renderClientes();
+        }
+        if (tabId === "tab-usuarios") {
+          renderUsuarios();
+        }
+      }
+
+      // ==== TABLAS PRECIOS / PROCESOS ====
+      function initTables() {
+        const tbodyPrecios = document.getElementById("tabla-precios");
+        if (!tbodyPrecios) return;
+        tbodyPrecios.innerHTML = "";
+        PRECIOS.forEach((p) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${p.PRODUCTO}</td>
+            <td>${p.ESPESOR_MM ?? ""}</td>
+            <td>$${p.PRECIO_M2.toFixed(2)}</td>
+          `;
+          tbodyPrecios.appendChild(tr);
+        });
+
+        const tbodyProc = document.getElementById("tabla-procesos");
+        if (!tbodyProc) return;
+        tbodyProc.innerHTML = "";
+        PROCESOS.forEach((p) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${p.PROCESO}</td>
+            <td>$${p.PRECIO_UNIT.toFixed(2)}</td>
+          `;
+          tbodyProc.appendChild(tr);
+        });
+      }
+
+      // ==== SELECTORES COTIZADOR ====
+      function initSelectors() {
+        const selProd = document.getElementById("cot-producto");
+        if (!selProd) return;
+        selProd.innerHTML = "";
+        PRECIOS.forEach((p, idx) => {
+          const opt = document.createElement("option");
+          opt.value = idx;
+          opt.textContent = `${p.PRODUCTO} (${p.ESPESOR_MM ?? "?"}mm)`;
+          selProd.appendChild(opt);
+        });
+
+        const procSelects = ["proc1", "proc2", "proc3"];
+        procSelects.forEach((id) => {
+          const sel = document.getElementById(id);
+          if (!sel) return;
+          sel.innerHTML = "";
+          const optNone = document.createElement("option");
+          optNone.value = "";
+          optNone.textContent = "Ninguno";
+          sel.appendChild(optNone);
+
+          PROCESOS.forEach((p, idx) => {
+            const opt = document.createElement("option");
+            opt.value = idx;
+            opt.textContent = `${p.PROCESO} ($${p.PRECIO_UNIT})`;
+            sel.appendChild(opt);
+          });
+        });
+
+        updatePrecioM2();
+      }
+
+      function updatePrecioM2() {
+        const selProd = document.getElementById("cot-producto");
+        if (!selProd) return;
+        const idx = parseInt(selProd.value, 10);
+        const producto = PRECIOS[idx];
+        if (!producto) return;
+        const precioInput = document.getElementById("cot-precio-m2");
+        if (precioInput) precioInput.value = producto.PRECIO_M2;
+        recalcular();
+      }
+
+      // ==== CÁLCULOS DEL COTIZADOR ====
+      function recalcular() {
+        const selProd = document.getElementById("cot-producto");
+        if (!selProd) return;
+        const idx = parseInt(selProd.value, 10);
+        const producto = PRECIOS[idx];
+        if (!producto) return;
+
+        const ancho = parseFloat(document.getElementById("cot-ancho").value) || 0;
+        const alto = parseFloat(document.getElementById("cot-alto").value) || 0;
+        const cantidad = parseFloat(document.getElementById("cot-cantidad").value) || 0;
+        const precioM2 = producto.PRECIO_M2;
+
+        const areaM2 = (ancho / 100) * (alto / 100);
+        const subtotalVidrio = areaM2 * precioM2 * cantidad;
+        const totalProc = calcProcesosTotal();
+
+        const subtotal = subtotalVidrio + totalProc;
+        const iva = subtotal * 0.16;
+        const total = subtotal + iva;
+
+        const elArea = document.getElementById("res-area");
+        const elSubVid = document.getElementById("res-subtotal-vidrio");
+        const elTotProc = document.getElementById("res-total-procesos");
+        const elSub = document.getElementById("res-subtotal");
+        const elIva = document.getElementById("res-iva");
+        const elTotal = document.getElementById("res-total");
+
+        if (elArea) elArea.textContent = areaM2.toFixed(3);
+        if (elSubVid) elSubVid.textContent = "$" + subtotalVidrio.toFixed(2);
+        if (elTotProc) elTotProc.textContent = "$" + totalProc.toFixed(2);
+        if (elSub) elSub.textContent = "$" + subtotal.toFixed(2);
+        if (elIva) elIva.textContent = "$" + iva.toFixed(2);
+        if (elTotal) elTotal.textContent = "$" + total.toFixed(2);
+      }
+
+      function getProcesosDetalle() {
+        const combos = [
+          { procId: "proc1", qId: "qproc1" },
+          { procId: "proc2", qId: "qproc2" },
+          { procId: "proc3", qId: "qproc3" },
+        ];
+        const detalle = [];
+        combos.forEach(({ procId, qId }) => {
+          const sel = document.getElementById(procId);
+          if (!sel) return;
+          const idx = sel.value === "" ? null : parseInt(sel.value, 10);
+          const cant = parseFloat(document.getElementById(qId).value) || 0;
+          if (idx !== null && PROCESOS[idx] && cant > 0) {
+            const p = PROCESOS[idx];
+            detalle.push({
+              PROCESO: p.PROCESO,
+              CANTIDAD: cant,
+              PRECIO_UNIT: p.PRECIO_UNIT,
+              IMPORTE: p.PRECIO_UNIT * cant,
+            });
+          }
+        });
+        return detalle;
+      }
+
+      function calcProcesosTotal() {
+        return getProcesosDetalle().reduce((sum, d) => sum + d.IMPORTE, 0);
+      }
+
+      // ==== IDS Y LOCALSTORAGE (COTIZACIONES / CLIENTES) ====
+      function getNextId() {
+        let id = parseInt(localStorage.getItem(LS_ID_KEY), 10);
+        if (!id || isNaN(id)) id = 1;
+        localStorage.setItem(LS_ID_KEY, String(id + 1));
+        return id;
+      }
+
+      function getNextClienteId() {
+        let id = parseInt(localStorage.getItem(LS_CLIENTES_ID_KEY), 10);
+        if (!id || isNaN(id)) id = 1;
+        localStorage.setItem(LS_CLIENTES_ID_KEY, String(id + 1));
+        return id;
+      }
+
+      function cargarListaCotizaciones() {
+        try {
+          const raw = localStorage.getItem(LS_KEY);
+          if (!raw) return [];
+          const parsed = JSON.parse(raw);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function cargarListaClientes() {
+        try {
+          const raw = localStorage.getItem(LS_CLIENTES_KEY);
+          if (!raw) return [];
+          const parsed = JSON.parse(raw);
+          return Array.isArray(parsed) ? parsed : [];
+        } catch {
+          return [];
+        }
+      }
+
+      // ==== GUARDAR COTIZACION (COTIZADOR -> COTIZACIONES + REGISTRO) ====
+      function guardarCotizacion() {
+        if (!currentUser) return;
+
+        const selProd = document.getElementById("cot-producto");
+        if (!selProd) return;
+        const prodIdx = parseInt(selProd.value, 10);
+        const producto = PRECIOS[prodIdx];
+        if (!producto) return;
+
+        const clienteNombre =
+          document.getElementById("cot-cliente").value.trim() || "SIN NOMBRE";
+        const obs = document.getElementById("cot-observaciones").value.trim();
+
+        const ancho = parseFloat(document.getElementById("cot-ancho").value) || 0;
+        const alto = parseFloat(document.getElementById("cot-alto").value) || 0;
+        const cantidad = parseFloat(document.getElementById("cot-cantidad").value) || 0;
+        const areaM2 = (ancho / 100) * (alto / 100);
+        const subtotalVidrio = areaM2 * producto.PRECIO_M2 * cantidad;
+        const procesosDetalle = getProcesosDetalle();
+        const totalProc = procesosDetalle.reduce((s, d) => s + d.IMPORTE, 0);
+        const subtotal = subtotalVidrio + totalProc;
+        const iva = subtotal * 0.16;
+        const total = subtotal + iva;
+
+        const id = getNextId();
+        const fecha = new Date().toISOString().slice(0, 10);
+
+        const registro = {
+          ID_COTIZACION: id,
+          FECHA: fecha,
+          CLIENTE: clienteNombre,
+          SUBTOTAL: subtotal,
+          IVA: iva,
+          TOTAL: total,
+          USUARIO: currentUser.USUARIO,
+          ID_USUARIO: currentUser.ID_USUARIO,
+          OBSERVACIONES: obs,
+          PRODUCTO: producto.PRODUCTO,
+          ANCHO_CM: ancho,
+          ALTO_CM: alto,
+          CANTIDAD: cantidad,
+          AREA_M2: areaM2,
+          PRECIO_M2: producto.PRECIO_M2,
+          PROCESOS: procesosDetalle,
+        };
+
+        const lista = cargarListaCotizaciones();
+        lista.push(registro);
+        localStorage.setItem(LS_KEY, JSON.stringify(lista));
+
+        alert("Cotización guardada (ID " + id + ").");
+        renderHistorial();
+        renderRegistro();
+      }
+
+      // ==== HISTORIAL (COTIZACIONES) ====
+      function renderHistorial() {
+        const lista = cargarListaCotizaciones();
+        const tbody = document.getElementById("tabla-historial");
+        if (!tbody) return;
+        tbody.innerHTML = "";
+
+        const isAdmin = currentUser && currentUser.ROL === "ADMIN";
+        const filtrada = isAdmin
+          ? lista
+          : lista.filter((c) => currentUser && c.USUARIO === currentUser.USUARIO);
+
+        filtrada
+          .slice()
+          .sort((a, b) => b.ID_COTIZACION - a.ID_COTIZACION)
+          .forEach((c) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${c.ID_COTIZACION}</td>
+              <td>${c.FECHA}</td>
+              <td>${c.CLIENTE}</td>
+              <td>$${c.TOTAL.toFixed(2)}</td>
+              <td>${c.USUARIO}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+      }
+
+      function exportarCotizacionesCSV() {
+        const lista = cargarListaCotizaciones();
+        if (!lista.length) {
+          alert("No hay cotizaciones para exportar.");
+          return;
+        }
+        const headers = [
+          "ID_COTIZACION",
+          "FECHA",
+          "CLIENTE",
+          "SUBTOTAL",
+          "IVA",
+          "TOTAL",
+          "USUARIO",
+          "ID_USUARIO",
+          "PRODUCTO",
+          "ANCHO_CM",
+          "ALTO_CM",
+          "CANTIDAD",
+          "AREA_M2",
+          "PRECIO_M2",
+          "PROCESOS_RESUMEN"
+        ];
+        const rows = [headers.join(",")];
+
+        lista.forEach((c) => {
+          const resumenProcesos = (c.PROCESOS || [])
+            .map((p) => `${p.PROCESO} x${p.CANTIDAD}`)
+            .join(" | ");
+          const row = [
+            c.ID_COTIZACION,
+            c.FECHA,
+            `"${c.CLIENTE.replace(/"/g, '""')}"`,
+            c.SUBTOTAL.toFixed(2),
+            c.IVA.toFixed(2),
+            c.TOTAL.toFixed(2),
+            c.USUARIO,
+            c.ID_USUARIO,
+            `"${(c.PRODUCTO || "").replace(/"/g, '""')}"`,
+            c.ANCHO_CM,
+            c.ALTO_CM,
+            c.CANTIDAD,
+            c.AREA_M2.toFixed(3),
+            c.PRECIO_M2,
+            `"${resumenProcesos.replace(/"/g, '""')}"`,
+          ];
+          rows.push(row.join(","));
+        });
+
+        const csvContent = rows.join("\n");
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "cotizaciones_vcq.csv";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      // ==== REGISTRO COTIZACION (DETALLE) ====
+      function renderRegistro() {
+        const lista = cargarListaCotizaciones();
+        const tbody = document.getElementById("tabla-registro");
+        if (!tbody) return;
+        tbody.innerHTML = "";
+
+        lista
+          .slice()
+          .sort((a, b) => b.ID_COTIZACION - a.ID_COTIZACION)
+          .forEach((c) => {
+            const procesos = c.PROCESOS && c.PROCESOS.length
+              ? c.PROCESOS
+              : [{ PROCESO: "SIN PROCESOS", CANTIDAD: 0, PRECIO_UNIT: 0, IMPORTE: 0 }];
+
+            const procesosTexto = procesos
+              .map((p) => `${p.PROCESO} (x${p.CANTIDAD})`)
+              .join(" | ");
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${c.ID_COTIZACION}</td>
+              <td>${c.FECHA}</td>
+              <td>${c.CLIENTE}</td>
+              <td>${c.PRODUCTO || ""}</td>
+              <td>${c.ANCHO_CM} x ${c.ALTO_CM} cm</td>
+              <td>${c.CANTIDAD}</td>
+              <td>${c.AREA_M2.toFixed(3)}</td>
+              <td>${procesosTexto}</td>
+              <td>$${c.TOTAL.toFixed(2)}</td>
+              <td>${c.USUARIO}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+      }
+
+      function exportarRegistroCSV() {
+        const lista = cargarListaCotizaciones();
+        if (!lista.length) {
+          alert("No hay registros para exportar.");
+          return;
+        }
+
+        const headers = [
+          "ID_COTIZACION",
+          "FECHA",
+          "CLIENTE",
+          "PRODUCTO",
+          "ANCHO_CM",
+          "ALTO_CM",
+          "CANTIDAD",
+          "AREA_M2",
+          "PROCESOS_RESUMEN",
+          "TOTAL",
+          "USUARIO"
+        ];
+        const rows = [headers.join(",")];
+
+        lista
+          .slice()
+          .sort((a, b) => b.ID_COTIZACION - a.ID_COTIZACION)
+          .forEach((c) => {
+            const resumenProcesos = (c.PROCESOS || [])
+              .map((p) => `${p.PROCESO} (x${p.CANTIDAD})`)
+              .join(" | ");
+
+            const row = [
+              c.ID_COTIZACION,
+              c.FECHA,
+              `"${c.CLIENTE.replace(/"/g, '""')}"`,
+              `"${(c.PRODUCTO || "").replace(/"/g, '""')}"`,
+              c.ANCHO_CM,
+              c.ALTO_CM,
+              c.CANTIDAD,
+              c.AREA_M2.toFixed(3),
+              `"${resumenProcesos.replace(/"/g, '""')}"`,
+              c.TOTAL.toFixed(2),
+              c.USUARIO,
+            ];
+            rows.push(row.join(","));
+          });
+
+        const csvContent = rows.join("\n");
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "registro_cotizaciones_vcq.csv";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      // ==== CLIENTES ====
+      function guardarCliente() {
+        if (!currentUser || currentUser.ROL !== "ADMIN") {
+          alert("Solo el admin puede crear clientes.");
+          return;
+        }
+        const nombre = document.getElementById("cli-nombre").value.trim();
+        const tel = document.getElementById("cli-telefono").value.trim();
+        const email = document.getElementById("cli-email").value.trim();
+        const rfc = document.getElementById("cli-rfc").value.trim();
+
+        if (!nombre) {
+          alert("El nombre del cliente es obligatorio.");
+          return;
+        }
+
+        const id = getNextClienteId();
+        const lista = cargarListaClientes();
+        lista.push({
+          ID_CLIENTE: id,
+          NOMBRE: nombre,
+          TELEFONO: tel,
+          EMAIL: email,
+          RFC: rfc,
+        });
+        localStorage.setItem(LS_CLIENTES_KEY, JSON.stringify(lista));
+
+        document.getElementById("cli-nombre").value = "";
+        document.getElementById("cli-telefono").value = "";
+        document.getElementById("cli-email").value = "";
+        document.getElementById("cli-rfc").value = "";
+
+        renderClientes();
+      }
+
+      function renderClientes() {
+        const lista = cargarListaClientes();
+        const tbody = document.getElementById("tabla-clientes");
+        if (!tbody) return;
+        tbody.innerHTML = "";
+
+        lista
+          .slice()
+          .sort((a, b) => a.ID_CLIENTE - b.ID_CLIENTE)
+          .forEach((c) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+              <td>${c.ID_CLIENTE}</td>
+              <td>${c.NOMBRE}</td>
+              <td>${c.TELEFONO || ""}</td>
+              <td>${c.EMAIL || ""}</td>
+              <td>${c.RFC || ""}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+      }
+
+      // ==== USUARIOS (solo lectura) ====
+      function renderUsuarios() {
+        const tbody = document.getElementById("tabla-usuarios");
+        if (!tbody) return;
+        tbody.innerHTML = "";
+
+        USUARIOS.forEach((u) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${u.ID_USUARIO}</td>
+            <td>${u.USUARIO}</td>
+            <td>${u.NOMBRE}</td>
+            <td>${u.ROL}</td>
+            <td>${u.ACTIVO}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      // ==== EVENT LISTENERS (reemplazan los onclick inline) ====
+      const btnLogin = document.getElementById("btn-login");
+      if (btnLogin) btnLogin.addEventListener("click", login);
+
+      const btnLogout = document.getElementById("btn-logout");
+      if (btnLogout) btnLogout.addEventListener("click", logout);
+
+      document.querySelectorAll(".nav-tab").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const tabId = btn.getAttribute("data-tab");
+          if (tabId) switchTab(tabId);
+        });
+      });
+
+      const btnGuardarCot = document.getElementById("btn-guardar-cotizacion");
+      if (btnGuardarCot) btnGuardarCot.addEventListener("click", guardarCotizacion);
+
+      const btnExport = document.getElementById("btn-export-csv");
+      if (btnExport) btnExport.addEventListener("click", exportarCotizacionesCSV);
+
+      const btnExportRegistro = document.getElementById("btn-export-registro");
+      if (btnExportRegistro) btnExportRegistro.addEventListener("click", exportarRegistroCSV);
+
+      const btnGuardarCliente = document.getElementById("btn-guardar-cliente");
+      if (btnGuardarCliente) btnGuardarCliente.addEventListener("click", guardarCliente);
+
+      // Inputs que recalculan
+      ["cot-ancho", "cot-alto", "cot-cantidad"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("input", recalcular);
+      });
+
+      ["proc1", "proc2", "proc3"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("change", recalcular);
+      });
+
+      ["qproc1", "qproc2", "qproc3"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("input", recalcular);
+      });
+
+      const selProd = document.getElementById("cot-producto");
+      if (selProd) selProd.addEventListener("change", updatePrecioM2);
+
+      // Pequeño "test" de arranque en consola
+      console.log("[VCQ] App cargada. Usa admin/admin123 o vendedor1/1234 para probar.");
+    });
+  </script>
+</body>
+</html>
