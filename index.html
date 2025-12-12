@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cotizador Vidrios VCQ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+      background: #0b1120;
+      color: #e5e7eb;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+    }
+    .app-container {
+      width: 100%;
+      max-width: 1100px;
+      padding: 16px;
+    }
+    .card {
+      background: radial-gradient(circle at top left, #1e293b, #020617);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.5);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+    h1, h2, h3 {
+      margin: 0 0 10px 0;
+    }
+    h1 {
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #7dd3fc;
+    }
+    .muted {
+      color: #9ca3af;
+      font-size: 13px;
+    }
+    .input-group {
+      margin-bottom: 10px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+      color: #d1d5db;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      color: #e5e7eb;
+      font-size: 14px;
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.4);
+    }
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: linear-gradient(to right, #0ea5e9, #22c55e);
+      color: #0b1120;
+      font-weight: 600;
+      width: 100%;
+      margin-top: 6px;
+    }
+    .btn-outline {
+      background: transparent;
+      color: #e5e7eb;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+    }
+    .btn-small {
+      padding: 5px 10px;
+      font-size: 12px;
+      border-radius: 999px;
+    }
+    .center {
+      text-align: center;
+    }
+    .nav-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .nav-tab {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: #9ca3af;
+      cursor: pointer;
+    }
+    .nav-tab.active {
+      background: rgba(56, 189, 248, 0.1);
+      border-color: rgba(56, 189, 248, 0.7);
+      color: #e5e7eb;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+    th, td {
+      padding: 6px 4px;
+      border-bottom: 1px solid rgba(31, 41, 55, 0.8);
+      text-align: left;
+    }
+    th {
+      font-weight: 500;
+      color: #9ca3af;
+    }
+    .totals {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      font-size: 13px;
+    }
+    .totals-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+    }
+    .totals-row strong {
+      font-weight: 600;
+    }
+    .tag {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: #9ca3af;
+    }
+    .flex {
+      display: flex;
+      gap: 10px;
+    }
+    .flex-2 { flex: 2; }
+    .flex-1 { flex: 1; }
+    .scroll {
+      max-height: 280px;
+      overflow: auto;
+    }
+    .login-wrapper {
+      max-width: 420px;
+      margin: 0 auto;
+      margin-top: 30px;
+    }
+    .hidden { display: none; }
+    @media (max-width: 768px) {
+      .flex { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- LOGIN -->
+    <div id="login-view" class="card login-wrapper">
+      <h1>
+        Cotizador VCQ
+        <span class="badge">Demo</span>
+      </h1>
+      <p class="muted">Inicia sesión con tu usuario de la hoja "USUARIOS". (por ahora todos usan la contraseña 1234)</p>
+
+      <div class="input-group">
+        <label>Usuario</label>
+        <input id="login-usuario" type="text" placeholder="ej. dan_arellano" />
+      </div>
+      <div class="input-group">
+        <label>Contraseña</label>
+        <input id="login-pass" type="password" placeholder="••••••••" />
+      </div>
+      <button id="btn-login" class="btn-primary">
+        Entrar
+      </button>
+      <p id="login-error" class="muted" style="color:#fca5a5;margin-top:8px;"></p>
+    </div>
+
+    <!-- APP PRINCIPAL -->
+    <div id="main-view" class="card hidden">
+      <div class="flex" style="align-items:flex-start; margin-bottom:12px;">
+        <div class="flex-2">
+          <h1>
+            Cotizador Vidrios VCQ
+            <span class="badge">Operativo</span>
+          </h1>
+          <p class="muted" id="user-info"></p>
+        </div>
+        <div class="flex-1 center">
+          <button id="btn-logout" class="btn-outline btn-small">Cerrar sesión</button>
+        </div>
+      </div>
+
+      <div class="nav-tabs">
+        <button class="nav-tab active" data-tab="tab-precios">Precios</button>
+        <button class="nav-tab" data-tab="tab-procesos">Procesos</button>
+        <button class="nav-tab" data-tab="tab-cotizador">Cotizador</button>
+        <button class="nav-tab" data-tab="tab-historial">Historial</button>
+        <button class="nav-tab" data-tab="tab-clientes" data-role="admin-only">Clientes</button>
+        <button class="nav-tab" data-tab="tab-registro" data-role="admin-only">Registro cotización</button>
+        <button class="nav-tab" data-tab="tab-usuarios" data-role="admin-only">Usuarios</button>
+      </div>
+
+      <!-- PRECIOS -->
+      <div id="tab-precios" class="tab">
+        <h3>Lista de precios (solo lectura)</h3>
+        <p class="muted">Datos tomados de la hoja "PRECIOS".</p>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Precio instalador</th>
+                <th>Precio público</th>
+                <th>Precio corte</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-precios"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PROCESOS -->
+      <div id="tab-procesos" class="tab hidden">
+        <h3>Procesos (solo lectura)</h3>
+        <p class="muted">Datos tomados de la hoja "PROCESOS".</p>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Proceso</th>
+                <th>Precio unitario (MXN)</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-procesos"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- COTIZADOR -->
+      <div id="tab-cotizador" class="tab hidden">
+        <h3>Cotizador principal</h3>
+        <p class="muted">
+          Calcula el total con base en área, tipo de precio y procesos.
+        </p>
+
+        <div class="flex">
+          <div class="flex-2">
+            <div class="input-group">
+              <label>Cliente</label>
+              <input id="cot-cliente" type="text" placeholder="Nombre cliente / empresa" />
+            </div>
+            <div class="input-group">
+              <label>Observaciones</label>
+              <textarea id="cot-observaciones" rows="2" placeholder="Notas especiales (opcional)"></textarea>
+            </div>
+
+            <div class="input-group">
+              <label>Producto</label>
+              <select id="cot-producto"></select>
+            </div>
+
+            <div class="input-group">
+              <label>Tipo de precio</label>
+              <select id="tipo-precio">
+                <option value="INSTALADOR">Instalador</option>
+                <option value="PUBLICO">Público</option>
+                <option value="CORTE">Corte</option>
+              </select>
+            </div>
+
+            <div class="flex">
+              <div class="flex-1 input-group">
+                <label>Ancho (cm)</label>
+                <input id="cot-ancho" type="number" />
+              </div>
+              <div class="flex-1 input-group">
+                <label>Alto (cm)</label>
+                <input id="cot-alto" type="number" />
+              </div>
+              <div class="flex-1 input-group">
+                <label>Cantidad</label>
+                <input id="cot-cantidad" type="number" value="1" min="1" />
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label>Precio m²</label>
+              <input id="cot-precio-m2" type="number" readonly />
+            </div>
+
+            <div style="margin-top:10px;">
+              <span class="tag">Procesos por pieza (máx. 3)</span>
+            </div>
+
+            <div class="flex" style="margin-top:8px;">
+              <div class="flex-1">
+                <div class="input-group">
+                  <label>Proc. 1</label>
+                  <select id="proc1"></select>
+                </div>
+                <div class="input-group">
+                  <label>Cant. proc. 1</label>
+                  <input id="qproc1" type="number" value="0" min="0" />
+                </div>
+              </div>
+              <div class="flex-1">
+                <div class="input-group">
+                  <label>Proc. 2</label>
+                  <select id="proc2"></select>
+                </div>
+                <div class="input-group">
+                  <label>Cant. proc. 2</label>
+                  <input id="qproc2" type="number" value="0" min="0" />
+                </div>
+              </div>
+              <div class="flex-1">
+                <div class="input-group">
+                  <label>Proc. 3</label>
+                  <select id="proc3"></select>
+                </div>
+                <div class="input-group">
+                  <label>Cant. proc. 3</label>
+                  <input id="qproc3" type="number" value="0" min="0" />
+                </div>
+              </div>
+            </div>
+
+            <button id="btn-guardar-cotizacion" class="btn-primary">
+              Guardar cotización
+            </button>
+            <button id="btn-pdf-cotizacion" class="btn-outline" style="width:100%;margin-top:8px;">
+              Descargar PDF de esta cotización
+            </button>
+          </div>
+
+          <div class="flex-1">
+            <div class="totals">
+              <div class="totals-row">
+                <span>Área (m²)</span>
+                <span id="res-area">0.00</span>
+              </div>
+              <div class="totals-row">
+                <span>Subtotal vidrio</span>
+                <span id="res-subtotal-vidrio">$0.00</span>
+              </div>
+              <div class="totals-row">
+                <span>Total procesos</span>
+                <span id="res-total-procesos">$0.00</span>
+              </div>
+              <div class="totals-row">
+                <span><strong>Subtotal</strong></span>
+                <span id="res-subtotal">$0.00</span>
+              </div>
+              <div class="totals-row">
+                <span>IVA 16%</span>
+                <span id="res-iva">$0.00</span>
+              </div>
+              <div class="totals-row" style="margin-top:6px;">
+                <span><strong>Total cotización</strong></span>
+                <span id="res-total" style="font-weight:700;color:#a5b4fc">$0.00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="muted" style="margin-top:8px;">
+          El historial se guarda en este dispositivo usando localStorage.
+        </p>
+      </div>
+
+      <!-- HISTORIAL (por usuario o global si admin) -->
+      <div id="tab-historial" class="tab hidden">
+        <div class="flex" style="align-items:center;margin-bottom:6px;">
+          <h3 style="flex:1;">Historial de cotizaciones</h3>
+          <button id="btn-export-csv" class="btn-outline btn-small">Exportar CSV</button>
+        </div>
+        <p class="muted">Si eres vendedor, ves solo tus cotizaciones. Si eres admin, ves todas.</p>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Total</th>
+                <th>Usuario</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-historial"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CLIENTES -->
+      <div id="tab-clientes" class="tab hidden">
+        <div class="flex" style="align-items:flex-start; gap:16px;">
+          <div class="flex-1">
+            <h3>Clientes</h3>
+            <p class="muted">Equivalente a la hoja "CLIENTES".</p>
+            <div class="scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Teléfono</th>
+                    <th>Email</th>
+                    <th>RFC</th>
+                  </tr>
+                </thead>
+                <tbody id="tabla-clientes"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="flex-1">
+            <h3>Agregar cliente</h3>
+            <p class="muted">Solo admin puede crear o editar clientes.</p>
+            <div class="input-group">
+              <label>Nombre</label>
+              <input id="cli-nombre" type="text" />
+            </div>
+            <div class="input-group">
+              <label>Teléfono</label>
+              <input id="cli-telefono" type="text" />
+            </div>
+            <div class="input-group">
+              <label>Email</label>
+              <input id="cli-email" type="email" />
+            </div>
+            <div class="input-group">
+              <label>RFC</label>
+              <input id="cli-rfc" type="text" />
+            </div>
+            <button id="btn-guardar-cliente" class="btn-primary">Guardar cliente</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- REGISTRO COTIZACION (detalle por proceso) -->
+      <div id="tab-registro" class="tab hidden">
+        <div class="flex" style="align-items:center;margin-bottom:6px;">
+          <h3 style="flex:1;">Registro de cotización (detalle)</h3>
+          <button id="btn-export-registro" class="btn-outline btn-small">Exportar registro CSV</button>
+        </div>
+        <p class="muted">Vista tipo "REGISTRO COTIZACION": una fila por cotización y sus procesos.</p>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>ID Cot.</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Producto</th>
+                <th>Dimensiones</th>
+                <th>Cant.</th>
+                <th>Área m²</th>
+                <th>Procesos</th>
+                <th>Total</th>
+                <th>Usuario</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-registro"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- USUARIOS -->
+      <div id="tab-usuarios" class="tab hidden">
+        <h3>Usuarios del sistema</h3>
+        <p class="muted">Equivalente a la hoja "USUARIOS" (solo lectura en este demo).</p>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Nombre</th>
+                <th>Rol</th>
+                <th>Activo</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-usuarios"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Librería para PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // ==== DATOS BASE (como las hojas de Excel) ====
+      var USUARIOS = [
+        { ID_USUARIO: 1, USUARIO: "carlos_fraile", CONTRASENA: "1234", NOMBRE: "Carlos Fraile", ROL: "ADMIN", ACTIVO: "SI" },
+        { ID_USUARIO: 2, USUARIO: "dan_arellano", CONTRASENA: "1234", NOMBRE: "Dan Arellano", ROL: "ADMIN", ACTIVO: "SI" },
+        { ID_USUARIO: 3, USUARIO: "susy_bust", CONTRASENA: "1234", NOMBRE: "Susy Bust", ROL: "VENT", ACTIVO: "SI" },
+        { ID_USUARIO: 4, USUARIO: "susana_peña", CONTRASENA: "1234", NOMBRE: "Susana Peña", ROL: "ADMIN", ACTIVO: "SI" },
+        { ID_USUARIO: 5, USUARIO: "vendedor", CONTRASENA: "1234", NOMBRE: "Vendedor genérico", ROL: "VENT", ACTIVO: "SI" }
+      ];
+
+      var PRECIOS = [
+        { PRODUCTO: "ANREFRIANTE 2MM", PRECIO_INSTALADOR: 740.0, PRECIO_PUBLICO: 910.0, PRECIO_CORTE: 1525.89 },
+        { PRODUCTO: "CLARO 2MM", PRECIO_INSTALADOR: 335.0, PRECIO_PUBLICO: 410.0, PRECIO_CORTE: 638.7 },
+        { PRODUCTO: "CLARO 3MM", PRECIO_INSTALADOR: 358.0, PRECIO_PUBLICO: 440.0, PRECIO_CORTE: 674.8 },
+        { PRODUCTO: "CLARO 4MM", PRECIO_INSTALADOR: 400.0, PRECIO_PUBLICO: 490.0, PRECIO_CORTE: 710.7 },
+        { PRODUCTO: "CLARO 5MM", PRECIO_INSTALADOR: 315.0, PRECIO_PUBLICO: 400.0, PRECIO_CORTE: 729.0 },
+        { PRODUCTO: "CLARO 6MM", PRECIO_INSTALADOR: 368.0, PRECIO_PUBLICO: 450.0, PRECIO_CORTE: 796.23 },
+        { PRODUCTO: "CLARO 8MM", PRECIO_INSTALADOR: 779.0, PRECIO_PUBLICO: 960.0, PRECIO_CORTE: 1610.2 },
+        { PRODUCTO: "CLARO 9/10MM", PRECIO_INSTALADOR: 950.0, PRECIO_PUBLICO: 1150.0, PRECIO_CORTE: 2301.8 },
+        { PRODUCTO: "CLARO 12MM", PRECIO_INSTALADOR: 1100.0, PRECIO_PUBLICO: 1560.0, PRECIO_CORTE: 2597.03 },
+        { PRODUCTO: "FILTRASOL 3MM", PRECIO_INSTALADOR: 304.26, PRECIO_PUBLICO: 426.0, PRECIO_CORTE: 990.0 },
+        { PRODUCTO: "FILTRASOL 6MM", PRECIO_INSTALADOR: 340.26, PRECIO_PUBLICO: 486.0, PRECIO_CORTE: 953.57 },
+        { PRODUCTO: "FILTRASOL 9MM", PRECIO_INSTALADOR: 1120.0, PRECIO_PUBLICO: 1450.0, PRECIO_CORTE: 2331.63 },
+        { PRODUCTO: "BRONCE 6MM", PRECIO_INSTALADOR: 1150.0, PRECIO_PUBLICO: 1430.0, PRECIO_CORTE: 3572.8 },
+        { PRODUCTO: "BRONCE 9MM", PRECIO_INSTALADOR: 1550.0, PRECIO_PUBLICO: 1930.0, PRECIO_CORTE: 4036.72 },
+        { PRODUCTO: "CRISTAZUL 3MM", PRECIO_INSTALADOR: 630.0, PRECIO_PUBLICO: 952.0, PRECIO_CORTE: 2734.2 },
+        { PRODUCTO: "CRISTAZUL 9MM", PRECIO_INSTALADOR: 5240.0, PRECIO_PUBLICO: 6520.0, PRECIO_CORTE: 10464.4 },
+        { PRODUCTO: "TINTEX 6MM", PRECIO_INSTALADOR: 1840.0, PRECIO_PUBLICO: 2280.0, PRECIO_CORTE: 3395.04 },
+        { PRODUCTO: "TINTEX 9MM", PRECIO_INSTALADOR: 3840.0, PRECIO_PUBLICO: 4530.0, PRECIO_CORTE: 9118.23 },
+        { PRODUCTO: "TX PLUS 6MM", PRECIO_INSTALADOR: 1645.0, PRECIO_PUBLICO: 1970.0, PRECIO_CORTE: 3279.2 },
+        { PRODUCTO: "LUNA 2MM", PRECIO_INSTALADOR: 388.0, PRECIO_PUBLICO: 457.0, PRECIO_CORTE: 829.36 },
+        { PRODUCTO: "LUNA 3MM", PRECIO_INSTALADOR: 469.0, PRECIO_PUBLICO: 549.0, PRECIO_CORTE: 957.89 },
+        { PRODUCTO: "LUNA 4MM", PRECIO_INSTALADOR: 489.0, PRECIO_PUBLICO: 579.0, PRECIO_CORTE: 1148.4 },
+        { PRODUCTO: "LUNA 6MM", PRECIO_INSTALADOR: 579.0, PRECIO_PUBLICO: 772.0, PRECIO_CORTE: 1293.11 },
+        { PRODUCTO: "LUNA FILT 3MM", PRECIO_INSTALADOR: 449.0, PRECIO_PUBLICO: 580.0, PRECIO_CORTE: 1293.4 },
+        { PRODUCTO: "LUNA VINTAGE 3MM", PRECIO_INSTALADOR: 449.0, PRECIO_PUBLICO: 580.0, PRECIO_CORTE: 1293.4 },
+        { PRODUCTO: "REFLECTA PLATA", PRECIO_INSTALADOR: 1099.0, PRECIO_PUBLICO: 1317.28, PRECIO_CORTE: 2189.79 },
+        { PRODUCTO: "INASTILLABLE CLARO", PRECIO_INSTALADOR: 1099.0, PRECIO_PUBLICO: 1321.55, PRECIO_CORTE: 2195.92 },
+        { PRODUCTO: "INASTILLABLE TX BRONCE", PRECIO_INSTALADOR: 1505.0, PRECIO_PUBLICO: 1806.26, PRECIO_CORTE: 3403.76 },
+        { PRODUCTO: "SATINADO 6MM", PRECIO_INSTALADOR: 1021.0, PRECIO_PUBLICO: 1223.06, PRECIO_CORTE: 2031.76 },
+        { PRODUCTO: "SATINADO 9MM", PRECIO_INSTALADOR: 1535.0, PRECIO_PUBLICO: 1865.92, PRECIO_CORTE: 6068.78 },
+        { PRODUCTO: "REFLECTA AZUL/ROYAL BLUE", PRECIO_INSTALADOR: 1100.0, PRECIO_PUBLICO: 2213.2, PRECIO_CORTE: 3682.0 },
+        { PRODUCTO: "ESLABON 3.5MM", PRECIO_INSTALADOR: 500.0, PRECIO_PUBLICO: 595.0, PRECIO_CORTE: 1000.0 }
+      ];
+
+      var PROCESOS = [
+        { PROCESO: "CANTO PULIDO 6MM", PRECIO_UNIT: 70 },
+        { PROCESO: "CANTO PULIDO 10MM", PRECIO_UNIT: 90 },
+        { PROCESO: "SAQUE", PRECIO_UNIT: 60 },
+        { PROCESO: "SAQUE PISO/GRANDE", PRECIO_UNIT: 110 },
+        { PROCESO: "BISAGRA MICKEY", PRECIO_UNIT: 75 },
+        { PROCESO: "BARRENO", PRECIO_UNIT: 30 },
+        { PROCESO: "FILO MUERTO 6MM", PRECIO_UNIT: 30 },
+        { PROCESO: "FILO MUERTO 9MM", PRECIO_UNIT: 30 },
+        { PROCESO: "ESMERILADO 6MM", PRECIO_UNIT: 180 },
+        { PROCESO: "ESMERILADO 9MM", PRECIO_UNIT: 210 },
+        { PROCESO: "MAQ. TEMPLADO 6MM", PRECIO_UNIT: 135 },
+        { PROCESO: "MAQ. TEMPLADO 9MM", PRECIO_UNIT: 235 },
+        { PROCESO: "MAQ. CANTO 6MM", PRECIO_UNIT: 50 },
+        { PROCESO: "MAQ. CANTO 10MM", PRECIO_UNIT: 50 }
+      ];
+
+      var LS_CLIENTES_KEY = "vcq_clientes";
+      var LS_CLIENTES_ID_KEY = "vcq_clientes_next_id";
+      var LS_KEY = "vcq_cotizaciones";
+      var LS_ID_KEY = "vcq_next_id";
+
+      var currentUser = null;
+
+      // ==== HELPERS PRECIO ====
+      function getTipoPrecio() {
+        var sel = document.getElementById("tipo-precio");
+        if (!sel) return "INSTALADOR";
+        var val = sel.value;
+        if (val === "PUBLICO" || val === "CORTE") return val;
+        return "INSTALADOR";
+      }
+
+      function getPrecioUnitario(producto) {
+        if (!producto) return 0;
+        var tipo = getTipoPrecio();
+        if (tipo === "PUBLICO") return producto.PRECIO_PUBLICO;
+        if (tipo === "CORTE") return producto.PRECIO_CORTE;
+        return producto.PRECIO_INSTALADOR;
+      }
+
+      // ==== LOGIN & ROLES ====
+      function login() {
+        var usuario = document.getElementById("login-usuario").value.trim();
+        var pass = document.getElementById("login-pass").value.trim();
+        var errorEl = document.getElementById("login-error");
+
+        var user = null;
+        for (var i = 0; i < USUARIOS.length; i++) {
+          var u = USUARIOS[i];
+          if (u.USUARIO.toLowerCase() === usuario.toLowerCase() && u.CONTRASENA === pass && u.ACTIVO === "SI") {
+            user = u;
+            break;
+          }
+        }
+
+        if (!user) {
+          errorEl.textContent = "Usuario o contraseña incorrectos.";
+          return;
+        }
+
+        currentUser = user;
+        errorEl.textContent = "";
+
+        document.getElementById("login-view").classList.add("hidden");
+        document.getElementById("main-view").classList.remove("hidden");
+
+        document.getElementById("user-info").textContent = user.NOMBRE + " · Rol: " + user.ROL;
+
+        configurarUIporRol();
+        initTables();
+        initSelectors();
+        renderUsuarios();
+        renderClientes();
+        recalcular();
+        renderHistorial();
+        renderRegistro();
+      }
+
+      function logout() {
+        currentUser = null;
+        document.getElementById("main-view").classList.add("hidden");
+        document.getElementById("login-view").classList.remove("hidden");
+      }
+
+      function configurarUIporRol() {
+        var isAdmin = currentUser && currentUser.ROL === "ADMIN";
+        var adminButtons = document.querySelectorAll("[data-role='admin-only']");
+        for (var i = 0; i < adminButtons.length; i++) {
+          adminButtons[i].style.display = isAdmin ? "inline-flex" : "none";
+        }
+
+        if (!isAdmin) {
+          switchTab("tab-cotizador");
+        }
+      }
+
+      // ==== TABS ====
+      function switchTab(tabId) {
+        var tabs = document.querySelectorAll(".tab");
+        for (var i = 0; i < tabs.length; i++) {
+          tabs[i].classList.add("hidden");
+        }
+        var tabEl = document.getElementById(tabId);
+        if (tabEl) tabEl.classList.remove("hidden");
+
+        var navTabs = document.querySelectorAll(".nav-tab");
+        for (var j = 0; j < navTabs.length; j++) {
+          var btn = navTabs[j];
+          btn.classList.remove("active");
+          if (btn.getAttribute("data-tab") === tabId) {
+            btn.classList.add("active");
+          }
+        }
+
+        if (tabId === "tab-historial") {
+          renderHistorial();
+        } else if (tabId === "tab-registro") {
+          renderRegistro();
+        } else if (tabId === "tab-clientes") {
+          renderClientes();
+        } else if (tabId === "tab-usuarios") {
+          renderUsuarios();
+        }
+      }
+
+      // ==== TABLAS PRECIOS / PROCESOS ====
+      function initTables() {
+        var tbodyPrecios = document.getElementById("tabla-precios");
+        if (!tbodyPrecios) return;
+        tbodyPrecios.innerHTML = "";
+        for (var i = 0; i < PRECIOS.length; i++) {
+          var p = PRECIOS[i];
+          var tr = document.createElement("tr");
+          tr.innerHTML =
+            "<td>" + p.PRODUCTO + "</td>" +
+            "<td>$" + p.PRECIO_INSTALADOR.toFixed(2) + "</td>" +
+            "<td>$" + p.PRECIO_PUBLICO.toFixed(2) + "</td>" +
+            "<td>$" + p.PRECIO_CORTE.toFixed(2) + "</td>";
+          tbodyPrecios.appendChild(tr);
+        }
+
+        var tbodyProc = document.getElementById("tabla-procesos");
+        if (!tbodyProc) return;
+        tbodyProc.innerHTML = "";
+        for (var j = 0; j < PROCESOS.length; j++) {
+          var pr = PROCESOS[j];
+          var trp = document.createElement("tr");
+          trp.innerHTML = "<td>" + pr.PROCESO + "</td>" +
+                          "<td>$" + pr.PRECIO_UNIT.toFixed(2) + "</td>";
+          tbodyProc.appendChild(trp);
+        }
+      }
+
+      // ==== SELECTORES COTIZADOR ====
+      function initSelectors() {
+        var selProd = document.getElementById("cot-producto");
+        if (!selProd) return;
+        selProd.innerHTML = "";
+        for (var i = 0; i < PRECIOS.length; i++) {
+          var p = PRECIOS[i];
+          var opt = document.createElement("option");
+          opt.value = i;
+          opt.textContent = p.PRODUCTO;
+          selProd.appendChild(opt);
+        }
+
+        var procSelectIds = ["proc1", "proc2", "proc3"];
+        for (var s = 0; s < procSelectIds.length; s++) {
+          var sel = document.getElementById(procSelectIds[s]);
+          if (!sel) continue;
+          sel.innerHTML = "";
+          var optNone = document.createElement("option");
+          optNone.value = "";
+          optNone.textContent = "Ninguno";
+          sel.appendChild(optNone);
+          for (var k = 0; k < PROCESOS.length; k++) {
+            var pr = PROCESOS[k];
+            var o = document.createElement("option");
+            o.value = k;
+            o.textContent = pr.PROCESO + " ($" + pr.PRECIO_UNIT + ")";
+            sel.appendChild(o);
+          }
+        }
+
+        updatePrecioM2();
+      }
+
+      function updatePrecioM2() {
+        var selProd = document.getElementById("cot-producto");
+        if (!selProd) return;
+        var idx = parseInt(selProd.value, 10);
+        if (isNaN(idx) || idx < 0 || idx >= PRECIOS.length) return;
+        var producto = PRECIOS[idx];
+        var precioInput = document.getElementById("cot-precio-m2");
+        if (precioInput && producto) {
+          var precio = getPrecioUnitario(producto);
+          precioInput.value = precio.toFixed(2);
+        }
+        recalcular();
+      }
+
+      // ==== CÁLCULOS DEL COTIZADOR ====
+      function recalcular() {
+        var selProd = document.getElementById("cot-producto");
+        if (!selProd) return;
+        var idx = parseInt(selProd.value, 10);
+        if (isNaN(idx) || idx < 0 || idx >= PRECIOS.length) return;
+        var producto = PRECIOS[idx];
+
+        var ancho = parseFloat(document.getElementById("cot-ancho").value) || 0;
+        var alto = parseFloat(document.getElementById("cot-alto").value) || 0;
+        var cantidad = parseFloat(document.getElementById("cot-cantidad").value) || 0;
+        var precioM2 = getPrecioUnitario(producto);
+
+        var areaM2 = (ancho / 100) * (alto / 100);
+        var subtotalVidrio = areaM2 * precioM2 * cantidad;
+        var totalProc = calcProcesosTotal();
+
+        var subtotal = subtotalVidrio + totalProc;
+        var iva = subtotal * 0.16;
+        var total = subtotal + iva;
+
+        var elArea = document.getElementById("res-area");
+        var elSubVid = document.getElementById("res-subtotal-vidrio");
+        var elTotProc = document.getElementById("res-total-procesos");
+        var elSub = document.getElementById("res-subtotal");
+        var elIva = document.getElementById("res-iva");
+        var elTotal = document.getElementById("res-total");
+
+        if (elArea) elArea.textContent = areaM2.toFixed(3);
+        if (elSubVid) elSubVid.textContent = "$" + subtotalVidrio.toFixed(2);
+        if (elTotProc) elTotProc.textContent = "$" + totalProc.toFixed(2);
+        if (elSub) elSub.textContent = "$" + subtotal.toFixed(2);
+        if (elIva) elIva.textContent = "$" + iva.toFixed(2);
+        if (elTotal) elTotal.textContent = "$" + total.toFixed(2);
+      }
+
+      function getProcesosDetalle() {
+        var combos = [
+          { procId: "proc1", qId: "qproc1" },
+          { procId: "proc2", qId: "qproc2" },
+          { procId: "proc3", qId: "qproc3" }
+        ];
+        var detalle = [];
+        for (var i = 0; i < combos.length; i++) {
+          var c = combos[i];
+          var sel = document.getElementById(c.procId);
+          if (!sel) continue;
+          var val = sel.value;
+          var idx = val === "" ? -1 : parseInt(val, 10);
+          var qEl = document.getElementById(c.qId);
+          var cant = qEl ? (parseFloat(qEl.value) || 0) : 0;
+          if (idx >= 0 && idx < PROCESOS.length && cant > 0) {
+            var p = PROCESOS[idx];
+            detalle.push({
+              PROCESO: p.PROCESO,
+              CANTIDAD: cant,
+              PRECIO_UNIT: p.PRECIO_UNIT,
+              IMPORTE: p.PRECIO_UNIT * cant
+            });
+          }
+        }
+        return detalle;
+      }
+
+      function calcProcesosTotal() {
+        var d = getProcesosDetalle();
+        var sum = 0;
+        for (var i = 0; i < d.length; i++) {
+          sum += d[i].IMPORTE;
+        }
+        return sum;
+      }
+
+      // ==== IDS Y LOCALSTORAGE (COTIZACIONES / CLIENTES) ====
+      function getNextId() {
+        var id = parseInt(localStorage.getItem(LS_ID_KEY), 10);
+        if (!id || isNaN(id)) id = 1;
+        localStorage.setItem(LS_ID_KEY, String(id + 1));
+        return id;
+      }
+
+      function getNextClienteId() {
+        var id = parseInt(localStorage.getItem(LS_CLIENTES_ID_KEY), 10);
+        if (!id || isNaN(id)) id = 1;
+        localStorage.setItem(LS_CLIENTES_ID_KEY, String(id + 1));
+        return id;
+      }
+
+      function cargarListaCotizaciones() {
+        try {
+          var raw = localStorage.getItem(LS_KEY);
+          if (!raw) return [];
+          var parsed = JSON.parse(raw);
+          if (Object.prototype.toString.call(parsed) === "[object Array]") {
+            return parsed;
+          }
+          return [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function cargarListaClientes() {
+        try {
+          var raw = localStorage.getItem(LS_CLIENTES_KEY);
+          if (!raw) return [];
+          var parsed = JSON.parse(raw);
+          if (Object.prototype.toString.call(parsed) === "[object Array]") {
+            return parsed;
+          }
+          return [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      // ==== GUARDAR COTIZACION ====
+      function guardarCotizacion() {
+        if (!currentUser) return;
+
+        var selProd = document.getElementById("cot-producto");
+        if (!selProd) return;
+        var prodIdx = parseInt(selProd.value, 10);
+        if (isNaN(prodIdx) || prodIdx < 0 || prodIdx >= PRECIOS.length) return;
+        var producto = PRECIOS[prodIdx];
+
+        var clienteInput = document.getElementById("cot-cliente");
+        var clienteNombre = clienteInput ? clienteInput.value.trim() : "";
+        if (!clienteNombre) clienteNombre = "SIN NOMBRE";
+
+        var obsInput = document.getElementById("cot-observaciones");
+        var obs = obsInput ? obsInput.value.trim() : "";
+
+        var ancho = parseFloat(document.getElementById("cot-ancho").value) || 0;
+        var alto = parseFloat(document.getElementById("cot-alto").value) || 0;
+        var cantidad = parseFloat(document.getElementById("cot-cantidad").value) || 0;
+        var areaM2 = (ancho / 100) * (alto / 100);
+        var precioUnit = getPrecioUnitario(producto);
+        var subtotalVidrio = areaM2 * precioUnit * cantidad;
+        var procesosDetalle = getProcesosDetalle();
+        var totalProc = 0;
+        for (var i = 0; i < procesosDetalle.length; i++) {
+          totalProc += procesosDetalle[i].IMPORTE;
+        }
+        var subtotal = subtotalVidrio + totalProc;
+        var iva = subtotal * 0.16;
+        var total = subtotal + iva;
+
+        var id = getNextId();
+        var fecha = new Date().toISOString().slice(0, 10);
+        var tipoPrecio = getTipoPrecio();
+
+        var registro = {
+          ID_COTIZACION: id,
+          FECHA: fecha,
+          CLIENTE: clienteNombre,
+          SUBTOTAL: subtotal,
+          IVA: iva,
+          TOTAL: total,
+          USUARIO: currentUser.USUARIO,
+          ID_USUARIO: currentUser.ID_USUARIO,
+          OBSERVACIONES: obs,
+          PRODUCTO: producto.PRODUCTO,
+          TIPO_PRECIO: tipoPrecio,
+          PRECIO_UNITARIO: precioUnit,
+          PRECIO_INSTALADOR: producto.PRECIO_INSTALADOR,
+          PRECIO_PUBLICO: producto.PRECIO_PUBLICO,
+          PRECIO_CORTE: producto.PRECIO_CORTE,
+          ANCHO_CM: ancho,
+          ALTO_CM: alto,
+          CANTIDAD: cantidad,
+          AREA_M2: areaM2,
+          PROCESOS: procesosDetalle
+        };
+
+        var lista = cargarListaCotizaciones();
+        lista.push(registro);
+        localStorage.setItem(LS_KEY, JSON.stringify(lista));
+
+        alert("Cotización guardada (ID " + id + ").");
+        renderHistorial();
+        renderRegistro();
+      }
+
+      // ==== PDF DE LA COTIZACIÓN ACTUAL ====
+      function generarPDFCotizacion() {
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+          alert("No se pudo cargar la librería de PDF.");
+          return;
+        }
+        var jsPDF = window.jspdf.jsPDF;
+        var doc = new jsPDF();
+
+        var clienteEl = document.getElementById("cot-cliente");
+        var cliente = clienteEl ? clienteEl.value : "";
+        cliente = cliente ? cliente.trim() : "SIN NOMBRE";
+
+        var obsEl = document.getElementById("cot-observaciones");
+        var obs = obsEl ? obsEl.value.trim() : "";
+
+        var prodSel = document.getElementById("cot-producto");
+        var prodIdx = prodSel ? parseInt(prodSel.value, 10) : -1;
+        var producto = (prodIdx >= 0 && prodIdx < PRECIOS.length) ? PRECIOS[prodIdx] : null;
+
+        var ancho = parseFloat(document.getElementById("cot-ancho").value) || 0;
+        var alto = parseFloat(document.getElementById("cot-alto").value) || 0;
+        var cantidad = parseFloat(document.getElementById("cot-cantidad").value) || 0;
+        var precioM2 = producto ? getPrecioUnitario(producto) : 0;
+        var areaM2 = (ancho / 100) * (alto / 100);
+        var subtotalVidrio = areaM2 * precioM2 * cantidad;
+        var procesosDetalle = getProcesosDetalle();
+        var totalProc = 0;
+        for (var i = 0; i < procesosDetalle.length; i++) {
+          totalProc += procesosDetalle[i].IMPORTE;
+        }
+        var subtotal = subtotalVidrio + totalProc;
+        var iva = subtotal * 0.16;
+        var total = subtotal + iva;
+
+        var y = 15;
+        doc.setFontSize(14);
+        doc.text("COTIZACIÓN VCQ", 14, y);
+        y += 8;
+
+        doc.setFontSize(10);
+        var fecha = new Date().toISOString().slice(0, 10);
+        doc.text("Fecha: " + fecha, 14, y);
+        y += 6;
+        doc.text("Cliente: " + cliente, 14, y);
+        y += 6;
+        if (currentUser) {
+          doc.text("Atendió: " + currentUser.NOMBRE + " (" + currentUser.USUARIO + ")", 14, y);
+          y += 6;
+        }
+
+        if (producto) {
+          y += 4;
+          doc.setFontSize(11);
+          doc.text("Detalle del vidrio", 14, y);
+          y += 6;
+          doc.setFontSize(10);
+          doc.text("Producto: " + producto.PRODUCTO, 14, y); y += 5;
+          doc.text("Tipo de precio: " + getTipoPrecio(), 14, y); y += 5;
+          doc.text("Precio m²: $" + precioM2.toFixed(2), 14, y); y += 5;
+          doc.text("Ancho: " + ancho + " cm", 14, y); y += 5;
+          doc.text("Alto: " + alto + " cm", 14, y); y += 5;
+          doc.text("Cantidad: " + cantidad, 14, y); y += 5;
+          doc.text("Área total: " + areaM2.toFixed(3) + " m²", 14, y); y += 8;
+        }
+
+        if (procesosDetalle.length > 0) {
+          doc.setFontSize(11);
+          doc.text("Procesos", 14, y);
+          y += 6;
+          doc.setFontSize(10);
+          for (var i2 = 0; i2 < procesosDetalle.length; i2++) {
+            var p = procesosDetalle[i2];
+            var linea = p.PROCESO + " x" + p.CANTIDAD + "  ($" + p.PRECIO_UNIT.toFixed(2) + " c/u)  = $" + p.IMPORTE.toFixed(2);
+            doc.text(linea, 14, y);
+            y += 5;
+            if (y > 270) {
+              doc.addPage();
+              y = 15;
+            }
+          }
+          y += 4;
+        }
+
+        doc.setFontSize(11);
+        doc.text("Totales", 14, y);
+        y += 6;
+        doc.setFontSize(10);
+        doc.text("Subtotal vidrio: $" + subtotalVidrio.toFixed(2), 14, y); y += 5;
+        doc.text("Total procesos: $" + totalProc.toFixed(2), 14, y); y += 5;
+        doc.text("Subtotal: $" + subtotal.toFixed(2), 14, y); y += 5;
+        doc.text("IVA 16%: $" + iva.toFixed(2), 14, y); y += 5;
+        doc.text("TOTAL: $" + total.toFixed(2), 14, y); y += 8;
+
+        if (obs) {
+          doc.setFontSize(11);
+          doc.text("Observaciones", 14, y);
+          y += 6;
+          doc.setFontSize(10);
+          var split = doc.splitTextToSize(obs, 180);
+          doc.text(split, 14, y);
+        }
+
+        var safeCliente = cliente || "cotizacion";
+        safeCliente = safeCliente.replace(/[^a-zA-Z0-9_-]/g, "_");
+        doc.save("cotizacion_" + safeCliente + ".pdf");
+      }
+
+      // ==== HISTORIAL ====
+      function renderHistorial() {
+        var lista = cargarListaCotizaciones();
+        var tbody = document.getElementById("tabla-historial");
+        if (!tbody) return;
+        tbody.innerHTML = "";
+
+        var filtrada = [];
+        var isAdmin = currentUser && currentUser.ROL === "ADMIN";
+        for (var i = 0; i < lista.length; i++) {
+          var c = lista[i];
+          if (isAdmin || (currentUser && c.USUARIO === currentUser.USUARIO)) {
+            filtrada.push(c);
+          }
+        }
+
+        filtrada.sort(function (a, b) { return b.ID_COTIZACION - a.ID_COTIZACION; });
+
+        for (var j = 0; j < filtrada.length; j++) {
+          var cot = filtrada[j];
+          var tr = document.createElement("tr");
+          tr.innerHTML = "<td>" + cot.ID_COTIZACION + "</td>" +
+                         "<td>" + cot.FECHA + "</td>" +
+                         "<td>" + cot.CLIENTE + "</td>" +
+                         "<td>$" + cot.TOTAL.toFixed(2) + "</td>" +
+                         "<td>" + cot.USUARIO + "</td>";
+          tbody.appendChild(tr);
+        }
+      }
+
+      function exportarCotizacionesCSV() {
+        var lista = cargarListaCotizaciones();
+        if (!lista.length) {
+          alert("No hay cotizaciones para exportar.");
+          return;
+        }
+        var headers = [
+          "ID_COTIZACION",
+          "FECHA",
+          "CLIENTE",
+          "SUBTOTAL",
+          "IVA",
+          "TOTAL",
+          "USUARIO",
+          "ID_USUARIO",
+          "PRODUCTO",
+          "TIPO_PRECIO",
+          "PRECIO_UNITARIO",
+          "ANCHO_CM",
+          "ALTO_CM",
+          "CANTIDAD",
+          "AREA_M2",
+          "PROCESOS_RESUMEN"
+        ];
+        var rows = [];
+        rows.push(headers.join(","));
+
+        for (var i = 0; i < lista.length; i++) {
+          var c = lista[i];
+          var resumenProcesosArr = [];
+          var procs = c.PROCESOS || [];
+          for (var j = 0; j < procs.length; j++) {
+            resumenProcesosArr.push(procs[j].PROCESO + " x" + procs[j].CANTIDAD);
+          }
+          var resumenProcesos = resumenProcesosArr.join(" | ");
+
+          var clienteCsv = (c.CLIENTE || "").replace(/"/g, '""');
+          var prodCsv = (c.PRODUCTO || "").replace(/"/g, '""');
+          var procCsv = resumenProcesos.replace(/"/g, '""');
+
+          var row = [
+            c.ID_COTIZACION,
+            c.FECHA,
+            '"' + clienteCsv + '"',
+            c.SUBTOTAL.toFixed(2),
+            c.IVA.toFixed(2),
+            c.TOTAL.toFixed(2),
+            c.USUARIO,
+            c.ID_USUARIO,
+            '"' + prodCsv + '"',
+            c.TIPO_PRECIO || "",
+            (c.PRECIO_UNITARIO || 0).toFixed(2),
+            c.ANCHO_CM,
+            c.ALTO_CM,
+            c.CANTIDAD,
+            c.AREA_M2.toFixed(3),
+            '"' + procCsv + '"'
+          ];
+          rows.push(row.join(","));
+        }
+
+        var csvContent = rows.join("\n");
+        var blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = "cotizaciones_vcq.csv";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      // ==== REGISTRO COTIZACION ====
+      function renderRegistro() {
+        var lista = cargarListaCotizaciones();
+        var tbody = document.getElementById("tabla-registro");
+        if (!tbody) return;
+        tbody.innerHTML = "";
+
+        lista.sort(function (a, b) { return b.ID_COTIZACION - a.ID_COTIZACION; });
+
+        for (var i = 0; i < lista.length; i++) {
+          var c = lista[i];
+          var procesos = c.PROCESOS && c.PROCESOS.length ? c.PROCESOS : [{ PROCESO: "SIN PROCESOS", CANTIDAD: 0 }];
+
+          var procesosArr = [];
+          for (var j = 0; j < procesos.length; j++) {
+            procesosArr.push(procesos[j].PROCESO + " (x" + procesos[j].CANTIDAD + ")");
+          }
+          var procesosTexto = procesosArr.join(" | ");
+
+          var tr = document.createElement("tr");
+          tr.innerHTML = "<td>" + c.ID_COTIZACION + "</td>" +
+                         "<td>" + c.FECHA + "</td>" +
+                         "<td>" + c.CLIENTE + "</td>" +
+                         "<td>" + (c.PRODUCTO || "") + "</td>" +
+                         "<td>" + c.ANCHO_CM + " x " + c.ALTO_CM + " cm</td>" +
+                         "<td>" + c.CANTIDAD + "</td>" +
+                         "<td>" + c.AREA_M2.toFixed(3) + "</td>" +
+                         "<td>" + procesosTexto + "</td>" +
+                         "<td>$" + c.TOTAL.toFixed(2) + "</td>" +
+                         "<td>" + c.USUARIO + "</td>";
+          tbody.appendChild(tr);
+        }
+      }
+
+      function exportarRegistroCSV() {
+        var lista = cargarListaCotizaciones();
+        if (!lista.length) {
+          alert("No hay registros para exportar.");
+          return;
+        }
+
+        var headers = [
+          "ID_COTIZACION",
+          "FECHA",
+          "CLIENTE",
+          "PRODUCTO",
+          "ANCHO_CM",
+          "ALTO_CM",
+          "CANTIDAD",
+          "AREA_M2",
+          "PROCESOS_RESUMEN",
+          "TOTAL",
+          "USUARIO"
+        ];
+        var rows = [];
+        rows.push(headers.join(","));
+
+        lista.sort(function (a, b) { return b.ID_COTIZACION - a.ID_COTIZACION; });
+
+        for (var i = 0; i < lista.length; i++) {
+          var c = lista[i];
+          var procs = c.PROCESOS || [];
+          var procesosArr = [];
+          for (var j = 0; j < procs.length; j++) {
+            procesosArr.push(procs[j].PROCESO + " (x" + procs[j].CANTIDAD + ")");
+          }
+          var resumenProcesos = procesosArr.join(" | ");
+
+          var clienteCsv = (c.CLIENTE || "").replace(/"/g, '""');
+          var prodCsv = (c.PRODUCTO || "").replace(/"/g, '""');
+          var procCsv = resumenProcesos.replace(/"/g, '""');
+
+          var row = [
+            c.ID_COTIZACION,
+            c.FECHA,
+            '"' + clienteCsv + '"',
+            '"' + prodCsv + '"',
+            c.ANCHO_CM,
+            c.ALTO_CM,
+            c.CANTIDAD,
+            c.AREA_M2.toFixed(3),
+            '"' + procCsv + '"',
+            c.TOTAL.toFixed(2),
+            c.USUARIO
+          ];
+          rows.push(row.join(","));
+        }
+
+        var csvContent = rows.join("\n");
+        var blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = "registro_cotizaciones_vcq.csv";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      // ==== CLIENTES ====
+      function guardarCliente() {
+        if (!currentUser || currentUser.ROL !== "ADMIN") {
+          alert("Solo el admin puede crear clientes.");
+          return;
+        }
+        var nombre = document.getElementById("cli-nombre").value.trim();
+        var tel = document.getElementById("cli-telefono").value.trim();
+        var email = document.getElementById("cli-email").value.trim();
+        var rfc = document.getElementById("cli-rfc").value.trim();
+
+        if (!nombre) {
+          alert("El nombre del cliente es obligatorio.");
+          return;
+        }
+
+        var id = getNextClienteId();
+        var lista = cargarListaClientes();
+        lista.push({
+          ID_CLIENTE: id,
+          NOMBRE: nombre,
+          TELEFONO: tel,
+          EMAIL: email,
+          RFC: rfc
+        });
+        localStorage.setItem(LS_CLIENTES_KEY, JSON.stringify(lista));
+
+        document.getElementById("cli-nombre").value = "";
+        document.getElementById("cli-telefono").value = "";
+        document.getElementById("cli-email").value = "";
+        document.getElementById("cli-rfc").value = "";
+
+        renderClientes();
+      }
+
+      function renderClientes() {
+        var lista = cargarListaClientes();
+        var tbody = document.getElementById("tabla-clientes");
+        if (!tbody) return;
+        tbody.innerHTML = "";
+
+        lista.sort(function (a, b) { return a.ID_CLIENTE - b.ID_CLIENTE; });
+
+        for (var i = 0; i < lista.length; i++) {
+          var c = lista[i];
+          var tr = document.createElement("tr");
+          tr.innerHTML = "<td>" + c.ID_CLIENTE + "</td>" +
+                         "<td>" + c.NOMBRE + "</td>" +
+                         "<td>" + (c.TELEFONO || "") + "</td>" +
+                         "<td>" + (c.EMAIL || "") + "</td>" +
+                         "<td>" + (c.RFC || "") + "</td>";
+          tbody.appendChild(tr);
+        }
+      }
+
+      // ==== USUARIOS (solo lectura) ====
+      function renderUsuarios() {
+        var tbody = document.getElementById("tabla-usuarios");
+        if (!tbody) return;
+        tbody.innerHTML = "";
+
+        for (var i = 0; i < USUARIOS.length; i++) {
+          var u = USUARIOS[i];
+          var tr = document.createElement("tr");
+          tr.innerHTML = "<td>" + u.ID_USUARIO + "</td>" +
+                         "<td>" + u.USUARIO + "</td>" +
+                         "<td>" + u.NOMBRE + "</td>" +
+                         "<td>" + u.ROL + "</td>" +
+                         "<td>" + u.ACTIVO + "</td>";
+          tbody.appendChild(tr);
+        }
+      }
+
+      // ==== EVENT LISTENERS ====
+      var btnLogin = document.getElementById("btn-login");
+      if (btnLogin) btnLogin.addEventListener("click", login);
+
+      var btnLogout = document.getElementById("btn-logout");
+      if (btnLogout) btnLogout.addEventListener("click", logout);
+
+      var navBtns = document.querySelectorAll(".nav-tab");
+      for (var i = 0; i < navBtns.length; i++) {
+        navBtns[i].addEventListener("click", function () {
+          var tabId = this.getAttribute("data-tab");
+          if (tabId) switchTab(tabId);
+        });
+      }
+
+      var btnGuardarCot = document.getElementById("btn-guardar-cotizacion");
+      if (btnGuardarCot) btnGuardarCot.addEventListener("click", guardarCotizacion);
+
+      var btnPdfCot = document.getElementById("btn-pdf-cotizacion");
+      if (btnPdfCot) btnPdfCot.addEventListener("click", generarPDFCotizacion);
+
+      var btnExport = document.getElementById("btn-export-csv");
+      if (btnExport) btnExport.addEventListener("click", exportarCotizacionesCSV);
+
+      var btnExportRegistro = document.getElementById("btn-export-registro");
+      if (btnExportRegistro) btnExportRegistro.addEventListener("click", exportarRegistroCSV);
+
+      var btnGuardarCliente = document.getElementById("btn-guardar-cliente");
+      if (btnGuardarCliente) btnGuardarCliente.addEventListener("click", guardarCliente);
+
+      var recalcIds = ["cot-ancho", "cot-alto", "cot-cantidad"];
+      for (var r = 0; r < recalcIds.length; r++) {
+        var el = document.getElementById(recalcIds[r]);
+        if (el) el.addEventListener("input", recalcular);
+      }
+
+      var procIds = ["proc1", "proc2", "proc3"]; 
+      for (var p = 0; p < procIds.length; p++) {
+        var pel = document.getElementById(procIds[p]);
+        if (pel) pel.addEventListener("change", recalcular);
+      }
+
+      var qIds = ["qproc1", "qproc2", "qproc3"]; 
+      for (var q = 0; q < qIds.length; q++) {
+        var qel = document.getElementById(qIds[q]);
+        if (qel) qel.addEventListener("input", recalcular);
+      }
+
+      var selProd = document.getElementById("cot-producto");
+      if (selProd) selProd.addEventListener("change", updatePrecioM2);
+
+      var selTipoPrecio = document.getElementById("tipo-precio");
+      if (selTipoPrecio) selTipoPrecio.addEventListener("change", updatePrecioM2);
+
+      console.log("[VCQ] App cargada. Ejemplo de usuario: dan_arellano / 1234");
+    });
+  </script>
+</body>
+</html>
